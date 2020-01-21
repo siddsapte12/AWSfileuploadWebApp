@@ -1,0 +1,100 @@
+<html>
+<head>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript">
+            function send() {
+			//alert(document.getElementById("username").value)
+                var person = {
+                    Username:document.getElementById("username").value,
+					Password:document.getElementById("pwd").value,
+                }
+				var url;
+				alert(person['Username'])
+                $.ajax({
+
+                    type: 'POST',
+                    url: 'https://rsfh3wxfrk.execute-api.us-east-1.amazonaws.com/test/login',
+                    contentType: 'text/plain',
+                    success: function(d) {
+					
+                        // Here's where you handle a successful response.
+						console.log(d[0].plan_select)
+						if(d[0].plan_select == 0){
+							url = "plan.html";
+						}
+						else{
+							url = "upload-js.html"
+						}
+						sessionStorage.setItem("username",person['Username']);
+						alert(sessionStorage.getItem("username"));
+						$(location).attr('href',url);
+						
+						
+                        
+                    },
+                    data:JSON.stringify(person),
+                    error: function(d) {
+						alert(d)
+                        // Here's where you handle an error response.
+                        // Note that if the error was due to a CORS issue,
+                        // this function will still fire, but there won't be any additional
+                        // information about the error.
+                    }
+                });
+            }
+    </script>
+	<link rel="stylesheet" href="./css/main.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">	
+</head>
+
+<body>
+    <header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <div class="container">
+          <a class="navbar-brand mr-4">YourDocs</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <!--div class="collapse navbar-collapse" id="navbarToggle"-->
+
+            <!--div class="navbar-nav mr-auto">--!
+             < !--a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>-->
+              <!--a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>-->
+            <!--/div-->
+       
+            <!-- Navbar Right Side -->	
+            <div class="navbar-nav navbar-left">
+                  <a class="nav-item nav-link" href="./index.html">Login</a>
+				  <a class="nav-item nav-link" href="./register.html">Register</a>
+
+              
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+	
+    <div class="col-md-8">
+    <div class="content-section">
+       
+			<div class="form-group">
+				<label for="exampleInputEmail1">User Name</label>
+				<input type="text" class="form-control" id="username" placeholder="User Name">
+			</div>
+		  <div class="form-group">
+			<label for="exampleInputPassword1">Password</label>
+			<input type="password" class="form-control" id="pwd" placeholder="Password">
+		  </div>
+
+		  <button class="btn btn-default" onclick='send()'>Submit</button>
+        
+    </div>
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            Don't Have An Account? <a class="ml-2" href="register.html">Register Here</a>
+        </small>
+    </div>
+        </div>
+	</body>
+</html>

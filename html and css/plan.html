@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+    * {
+  box-sizing: border-box;
+}
+
+/* Create three columns of equal width */
+.columns {
+  float: left;
+  width: 20%;
+  padding: 2px;
+}
+
+/* Style the list */
+.price {
+  list-style-type: none;
+  border: 1px solid #eee;
+  margin: 0;
+  padding: 0;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+}
+
+/* Add shadows on hover */
+.price:hover {
+  box-shadow: 0 8px 12px 0 rgba(0,0,0,0.2)
+}
+
+/* Pricing header */
+.price .header {
+  background-color: #111;
+  color: white;
+  font-size: 25px;
+}
+
+/* List items */
+.price li {
+  border-bottom: 1px solid #eee;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Grey list item */
+.price .grey {
+  background-color: #eee;
+  font-size: 20px;
+}
+
+/* The "Sign Up" button */
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 10px 25px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+/* Change the width of the three columns to 100%
+(to stack horizontally on small screens) */
+@media only screen and (max-width: 600px) {
+  .columns {
+    width: 100%;
+  }
+}
+/*PAYMENT*/
+h4{
+    text-align: center;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.amount{
+display: inline;
+}
+
+#pay{
+  margin-top: 10px;
+}
+
+.form-control, .btn{
+    border-radius: 0;}
+
+.standard-button{
+ // background-color: #eebe25;
+  color: rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-left: 35px;
+  padding-right: 35px;
+  border-radius: 0;
+  border:none;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 16em;
+  font-weight: 600;}
+  &:hover, &:active{
+    // background-color: #616dab;
+    background-color: #4b6a7e;
+    color: white;
+  }
+
+}
+
+.btn-anim{
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+
+.btn-anim:after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+.hide{
+  display:none;  
+}
+
+</style>
+
+<script src ="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+ <script type="text/javascript">
+		document.onreadystatechange = function checkAndDisplayUser(){
+		/*Check if the user exists in the session and display user*/
+		if (sessionStorage.getItem("username")!= null){
+			document.getElementById("userid").innerHTML = sessionStorage.getItem("username")
+		}
+		else{
+		
+			$(location).attr('href','index.html');
+		}
+
+	}
+
+	function sync(amount,plan,image)
+	{
+	 console.log(event);
+	 console.log(amount);
+	 
+	 console.log(document.getElementById(amount).innerText);
+	 images = document.getElementById(image).innerText
+	 price= document.getElementById(amount).innerText.substring(1)
+	 document.getElementById('numberofimages').value =images
+	 document.getElementById('amt').value = price;
+	 document.getElementById('plID').value= document.getElementById(plan).innerText; 
+	}
+	function send() {
+		var pl = document.getElementById("plID").value
+		var amt = document.getElementById("amt").value
+		var cn = document.getElementById("cardname").value
+		var images =  document.getElementById("numberofimages").value
+
+		if (!(p1 && amt && cn)) {
+			alert("You have not selected a plan or the card name is empty")
+			return
+		}
+		var plan = {
+					cardname:cn,
+					amount:amt,
+					plan: pl,
+					image:images,
+					username:sessionStorage.getItem("username")
+							}
+
+		$.ajax({
+			type: 'POST',
+			url: 'https://rsfh3wxfrk.execute-api.us-east-1.amazonaws.com/test/plan',
+			contentType: 'text/plain',
+			success: function(d) {	
+				// Here's where you handle a successful response.
+				alert(d)
+				$(location).attr('href','upload-js.html');
+			},
+			data:JSON.stringify(plan),
+			error: function(d) {
+				alert(d)
+				// Here's where you handle an error response.
+				// Note that if the error was due to a CORS issue,
+				// this function will still fire, but there won't be any additional
+				// information about the error.
+			}
+		});
+	}
+	function logout(){
+	sessionStorage.clear();
+	$(location).attr('href','index.html');
+	}
+</script>
+
+<head>
+ <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+<link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}"> -->
+    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='plan.css') }}" > -->
+    <!-- {% if title %} -->
+        <!-- <title>Flask Blog - {{ title }}</title> -->
+    <!-- {% else %} -->
+        <title>Doc- Register</title>
+    <!-- {% endif %} -->
+    <meta charset="UTF-8">
+    <title>Plan</title>
+</head>
+<body>
+
+<!-- LAYOUT.HTML-->
+<header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <div class="container">
+          <a class="navbar-brand mr-4">YourDoc</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <!--div class="collapse navbar-collapse" id="navbarToggle"-->
+
+            <!--div class="navbar-nav mr-auto">--!
+             < !--a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>-->
+              <!--a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>-->
+            <!--/div-->
+       
+            <!-- Navbar Right Side -->
+            <div class="navbar-nav navbar-left">
+                  <a class="nav-item nav-link" onclick="logout()">Logout</a>
+             
+            </div>
+			<div class="navbar-nav navbar-left">
+                  <a class="hide" id="userid" href=""></a>
+             
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- <main role="main" class="container"> -->
+      <!-- <div class="row"> -->
+        <!-- <div class="col-md-11"> -->
+          <!-- {% with messages = get_flashed_messages(with_categories=true) %} -->
+            <!-- {% if messages %} -->
+              <!-- {% for category, message in messages %} -->
+                <!-- <div class="alert alert-{{ category }}"> -->
+                  <!-- {{ message }} -->
+                <!-- </div> -->
+              <!-- {% endfor %} -->
+            <!-- {% endif %} -->
+          <!-- {% endwith %} -->
+          <!-- {% block content %}{% endblock %} -->
+      <!-- </div> -->
+ <!-- </div> -->
+<!-- </main> -->
+<!--LAYOUT END-->
+
+<div class="columns">
+  <ul class="price" >
+    <li class="header">Basic Plan</li>
+    <li class="grey" name="Basic" id="p1">$500</li>
+	<li class ="hide" id="pl1">1</li>
+    <li>500 images</li>
+	<li class="hide" id="i1">500</li>
+    <li>upto 4 MB each</li>
+    <li class="grey"><button class="button" onclick= "sync('p1','pl1','i1')">Sign Up</button></li>
+  </ul>
+</div>
+ <div class="columns">
+  <ul class="price">
+    <li class="header">Regular Plan</li>
+    <li class="grey" name="Regular" id="p2">$1500</li>
+	<li class ="hide" id="pl2">2</li>
+    <li>1000 Images</li>
+	<li class="hide" id="i2">1000</li>
+    <li>upto 4 MB each</li>
+    <li class="grey"><button class="button" onclick="sync('p2','pl2','i2')">Sign Up</button></li>
+  </ul>
+</div>
+ <div class="columns">
+  <ul class="price">
+    <li class="header">Premium Plan</li>
+    <li class="grey" name="Premium" id="p3">$2000 </li>
+	<li class ="hide" id="pl3">3</li>
+    <li>2500 Images</li>
+	<li class="hide" id="i3">2500</li>
+    <li>Upto 4 MB each</li>
+    <li class="grey"><button  class="button" onclick="sync('p3','pl3','i3')">Sign Up</button></li>
+  </ul>
+ </div>
+ <div class="columns">
+ <ul class="price" style ="width:200%">
+   <li class="header">PAY HERE</li>
+   <li> <script src='https://js.stripe.com/v2/' type='text/javascript'></script>
+                   
+                       <div style="margin:0;padding:0;display:inline">
+                           <input name="utf8" type="hidden" value="✓" />
+                           <input name="_method" type="hidden" value="PUT" />
+                           <input name="authenticity_token" type="hidden" value="qLZ9cScer7ZxqulsUWazw4x3cSEzv899SP/7ThPCOV8=" />
+
+                       </div>
+                     <div class='form-row'>
+                       <div class='col-md-12 form-group required'>
+                         <label class='control-label'>Name on Card</label>
+                         <input class='form-control' id= "cardname" size='4' type='text'>
+                       </div>
+                     </div>
+                     <div class='form-row'>
+                       <div class='col-md-12 form-group required'>
+                         <label class='control-label'>Card Number</label>
+                         <input autocomplete='off' class='form-control card-number' id="cardnumber"size='20' type='text'>
+                       </div>
+                     </div>
+                     <div class='form-row'>
+                       <div class='col-xs-4 form-group cvc required'>
+                         <label class='control-label'>CVC</label>
+                         <input autocomplete='off' class='form-control card-cvc' id="cvc" placeholder='ex. 311' size='4' type='text'>
+                       </div>
+                       <div class='col-xs-4 form-group expiration required'>
+                         <label class='control-label'>Expiration</label>
+                         <input class='form-control card-expiry-month' id="mm" placeholder='MM' size='2' type='text'>
+                       </div>
+                       <div class='col-xs-4 form-group expiration required'>
+                         <label class='control-label'> </label>
+                         <input class='form-control card-expiry-year' id="yyyy"placeholder='YYYY' size='4' type='text'>
+                       </div>
+                     </div>
+                     <div class='form-row'>
+                       <div class='col-md-12'>
+                         <div class='form-control total btn btn-info standard-button'>
+                           Total:
+                           <span class='amount'><input type="text" id="amt" readonly/>
+						   <input class="hide" type="text" id="plID" readonly/>
+						   <input class="hide" type="text" id="numberofimages" readonly/>
+						   </span>
+						   
+                         </div>
+                       </div>
+                     </div>
+                     <div class='form-row'>
+                       <div class='col-md-12 form-group'>
+                    
+                         <button class='form-control btn btn-primary submit-button standard-button' onclick='send()' id="pay">PAY >></button>
+                       </div>
+                     </div>
+                     <div class='form-row'>
+                       <div class='col-md-12 error form-group hide'>
+                         <div class='alert-danger alert'>
+                           Please correct the errors and try again.
+                         </div>
+                       </div>
+                     </div>
+                   
+     </li>
+ </ul>
+</div>
+
+</body>
+</html>

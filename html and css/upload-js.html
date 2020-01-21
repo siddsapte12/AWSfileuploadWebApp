@@ -1,0 +1,174 @@
+<!DOCUMENT html>
+<html lang="en">
+<head>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+ 
+	<link rel="stylesheet" href="./css/main.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<style>
+.upload{
+ color:green
+}
+</style>
+
+<script type="text/javascript">
+		document.onreadystatechange = function checkAndDisplayUser(){
+		/*Check if the user exists in the session and display user*/
+		if (sessionStorage.getItem("username")!= null){
+			//document.getElementById("userid").innerHTML = sessionStorage.getItem("username")
+		}
+		else{
+		
+			$(location).attr('href','index.html');
+		}
+
+	}
+
+</script>
+	
+</head>
+
+<body>
+    <header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <div class="container">
+          <a class="navbar-brand mr-4">YourDocs</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <!--div class="collapse navbar-collapse" id="navbarToggle"-->
+
+            <!--div class="navbar-nav mr-auto">--!
+             < !--a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>-->
+              <!--a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>-->
+            <!--/div-->
+       
+            <!-- Navbar Right Side -->	
+            <div class="navbar-nav navbar-left">
+                  <a class="nav-item nav-link"  onclick="logout()")>Logout</a>
+				
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+<p id="statusUpdate"></p>
+<form id='file-catcher'>
+  <input id='file-input' type='file' multiple/>
+  <button type='submit'>
+    Submit
+  </button>
+</form>
+<h4>Selected to upload </h4>
+<div id='file-list-display'></div>
+
+<h4>Not uploaded </h4>
+<div id='file-not-list-display'></div>
+</body>
+<script>
+	function logout(){
+	sessionStorage.clear();
+	$(location).attr('href','index.html');
+	}
+</script>
+
+<script>
+
+(function () {
+  var fileCatcher = document.getElementById('file-catcher');
+  var fileInput = document.getElementById('file-input');
+  var fileListDisplay = document.getElementById('file-list-display');
+  var fileNotListDisplay = document.getElementById('file-not-list-display');
+  var fileList = [];
+  var fileNotList = [];
+  var renderFileList, sendFile;
+  var i = 0;
+  fileCatcher.addEventListener('submit', function (evnt) {
+  	evnt.preventDefault();
+    fileList.forEach(function (file) {
+		if (file.type=='image/jpeg'){
+		
+			if (file.size <=4000000){
+		var username = sessionStorage.getItem("username")
+		var filename = username+"/"+file.name
+    	encodeImageFileAsURL(file,filename);
+		}
+		
+	}
+		
+    });
+  });
+  
+  fileInput.addEventListener('change', function (evnt) {
+ 		fileList = [];
+		fileNotList = [];
+  	for (var i = 0; i < fileInput.files.length; i++) {	
+		console.log(fileInput.files[i].type)
+		if (fileInput.files[i].type=='image/jpeg'){
+			if (fileInput.files[i].size <= 4000000){
+				fileList.push(fileInput.files[i]);
+			}
+			else{
+				fileNotList.push(fileInput.files[i])
+			}
+		
+		}
+		else{
+		
+			fileNotList.push(fileInput.files[i])
+		}
+		
+    }
+    renderFileList();
+	renderNotFileList();
+  });
+  
+  renderFileList = function () {
+  	fileListDisplay.innerHTML = '';
+    fileList.forEach(function (file, index) {
+    	var fileDisplayEl = document.createElement('p');
+      fileDisplayEl.innerHTML = (index + 1) + ': ' + file.name;
+      fileListDisplay.appendChild(fileDisplayEl);
+    });
+  };
+   renderNotFileList = function () {
+  	fileNotListDisplay.innerHTML = '';
+    fileNotList.forEach(function (file, index) {
+	  var fileDisplayEl = document.createElement('p');
+      fileDisplayEl.innerHTML = (index + 1) + ': ' + file.name;
+      fileNotListDisplay.appendChild(fileDisplayEl);
+    });
+  };
+  function encodeImageFileAsURL(element,filename) {
+	var file = element;
+	var reader = new FileReader();
+	reader.onloadend = function() {
+    console.log('RESULT', reader.result)
+	var request = new XMLHttpRequest();
+	request.onreadystatechange = function() {
+    if (request.readyState == XMLHttpRequest.DONE) {
+			response = JSON.parse(request.responseText)
+			//console.log (body)
+			document.getElementById('statusUpdate').innerHTML = "Congratulations!!! Upload Sucessful. You can upload more "+response.body.count+" files."
+			//console.log(request.responseText);
+		}
+	}
+	//formData.set('filename',filename,username)
+    request.open("POST", 'https://rsfh3wxfrk.execute-api.us-east-1.amazonaws.com/test/upload');
+	request.setRequestHeader("Content-Type", "image/jpeg");
+	request.setRequestHeader("X-Filename",filename);
+	console.log(reader.result)
+    request.send(file);
+	fileListDisplay.getElementsByTagName('p')[i].classList.add("upload")
+	i++;
+  }
+  reader.readAsDataURL(file);
+}
+
+})();
+
+</script>
+</html>
+
